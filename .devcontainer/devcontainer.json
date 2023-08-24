@@ -1,7 +1,9 @@
-"name": "my-project-devcontainer",
-"image": "mcr.microsoft.com/devcontainers/base:ubuntu",  // Any generic, debian-based image.
-"features": {
+{
+    "name": "my-project-devcontainer",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",  // Any generic, debian-based image.
     "features": {
-        "ghcr.io/devcontainers/features/desktop-lite:1": {}
+        "features": {
+            "ghcr.io/devcontainers/features/desktop-lite:1": {}
+        }
     }
 }
