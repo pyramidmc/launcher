@@ -1,0 +1,32 @@
+.titleBar {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  background-color: black;
+}
+
+.logo {
+  margin-left: 20px;
+}
+
+.spacer {
+  flex: 1; /* This will push the closeButton to the right */
+}
+
+.closeButton {
+  height: 100%;
+  padding: 10px; /* Add padding for better visibility and click area */
+  cursor: pointer; /* Add cursor pointer for interaction */
+}
+
+.closeButton:hover {
+  background-color: #8b0000;
+}
+
+.draggable {
+  -webkit-app-region: drag;
+}
+
+.nonDraggable {
+  -webkit-app-region: no-drag;
+}

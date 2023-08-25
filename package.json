@@ -11,6 +11,12 @@
     "electron": "nodemon --watch electron/ --exec \"swc ./electron/index.ts -d ./dist && npx electron .\" electron/index.ts"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@xmcl/core": "^2.12.0",
+    "@xmcl/user": "^3.0.3",
+    "framer-motion": "^10.16.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
