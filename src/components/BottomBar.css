@@ -1,7 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap');
+
 .mainBottomBar {
-    height: 175px;
+    height: 59px;
     background-color: black;
     position: fixed;
     bottom: 0;
     width: 100vw;
+}
+
+.spinnerCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.launchButton {
+    color: white;
+    font-weight: 800;
+    border-radius: 40px;
+    width: 294px;
+    height: 76px;
+    font-size: 36px;
+    font-family: 'Inter', sans-serif;
+    position: absolute;
+    top: -17px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.versionSelect {
+    color: white;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+}
+
+.versionSelectOptions {
+    color: black;
 }

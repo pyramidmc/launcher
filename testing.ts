@@ -1,4 +1,4 @@
-    import { launch } from "@xmcl/core";
+import { launch } from "@xmcl/core";
 import { YggdrasilClient, YggrasilAuthentication } from "@xmcl/user";
 
 async function doShit() {
@@ -6,13 +6,13 @@ async function doShit() {
     const javaPath = 'java'
     const gamePath = 'C:/Users/USER/AppData/Roaming/.minecraft'
 
-    const client = new YggdrasilClient('http://localhost:8081/auth');
-    const username = 'cmm@srizan.dev'
-    const password = 'asdfghbelwsv'
+    const client = new YggdrasilClient('http://localhost:25500/auth');
+    const username = 'user1@example.com'
+    const password = 'test'
 
     const auth = await client.login({ username, password, clientToken: 'jhadskblaekljbhklnbgeak' }).catch(e => {return console.error(e)})
 
-    const l = await launch({ gamePath, javaPath, version, accessToken: (auth as YggrasilAuthentication).accessToken, gameProfile: (auth as YggrasilAuthentication).selectedProfile, extraJVMArgs: ['-Dminecraft.api.auth.host=http://localhost:8081/auth', '-Dminecraft.api.account.host=http://localhost:8081/account', '-Dminecraft.api.session.host=http://localhost:8081/session', '-Dminecraft.api.services.host=http://localhost:8081/services'] });
+    const l = await launch({ gamePath, javaPath, version, accessToken: (auth as YggrasilAuthentication).accessToken, gameProfile: (auth as YggrasilAuthentication).selectedProfile, extraJVMArgs: ['-Dminecraft.api.auth.host=http://localhost:25500/auth'] });
     l.stdout?.on('data', (data) => {
         console.log(data.toString())
     })
