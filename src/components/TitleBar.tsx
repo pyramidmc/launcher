@@ -12,7 +12,7 @@ export default function TitleBar() {
     <div className="titleBar draggable">
       <img src={LogoTitleBar} alt="Logo" className="logo" />
       <div className="spacer" />
-      <div className="closeButton nonDraggable" onClick={closeWindow}>
+      <div className="closeButton nonDraggable cursorDefault" onClick={closeWindow}>
         <CloseButton color={'red'} _hover={{ bg: 'none' }} />
       </div>
     </div>

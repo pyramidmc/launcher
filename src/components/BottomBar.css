@@ -6,6 +6,7 @@
     position: fixed;
     bottom: 0;
     width: 100vw;
+    font-family: 'Inter', sans-serif;
 }
 
 .spinnerCenter {
@@ -22,7 +23,6 @@
     width: 294px;
     height: 76px;
     font-size: 36px;
-    font-family: 'Inter', sans-serif;
     position: absolute;
     top: -17px;
     left: 50%;
@@ -32,9 +32,14 @@
 .versionSelect {
     color: white;
     font-weight: 800;
-    font-family: 'Inter', sans-serif;
 }
 
 .versionSelectOptions {
     color: black;
+}
+
+.userModal * {
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }

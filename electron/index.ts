@@ -1,11 +1,11 @@
 import * as path from 'node:path'
 import EventEmitter from 'node:events'
 import { app, BrowserWindow, ipcMain } from 'electron';
-import YggdrasilServer from '@pyramidmc/tree'
+import YggdrasilServer from '../tree'
 import { launch } from "@xmcl/core";
 import { YggdrasilClient, YggrasilAuthentication } from "@xmcl/user";
 import { getVersionList } from "@xmcl/installer";
-import { WebSocketServer } from 'isomorphic-ws';
+import { WebSocketServer } from 'ws';
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
@@ -23,16 +23,16 @@ function createWindow() {
 
 	if (app.isPackaged) {
 		mainWindow.loadFile(path.join(__dirname, '../build/index.html'));
+		new YggdrasilServer(path.join(__dirname, '../tree/drizzle'))
 	} else {
 		mainWindow.loadURL('http://localhost:5648');
+		new YggdrasilServer('./tree/drizzle')
 	}
 
 	const events = new EventEmitter()
 
-	new YggdrasilServer()
-
 	const wss = new WebSocketServer({ port: 25501 })
-	wss.on('listening', () => console.log('Websocket server listening on port 25501'))
+	wss.on('listening', () => console.log('Websocket server started on port 25501'))
 	wss.on('connection', (ws) => {
 		let userInfoRequest: string | undefined
 		ws.on('error', console.error);
@@ -64,13 +64,15 @@ function createWindow() {
 		mainWindow.close();
 	})
 
-	ipcMain.on('launch-mc', async () => {
-		const mcLaunch = await doShit()
+	ipcMain.on('launch-mc', async (_event, args: LaunchMCArgs) => {
+		const mcLaunch = await doShit(args.version)
+		let isProcessRunning = true
 		mcLaunch.on('spawn', () => {
 			events.emit('mc-process', 'spawn')
 		})
 		mcLaunch.on('close', (code) => {
 			events.emit('mc-process', 'close', code)
+			isProcessRunning = false
 		})
 		mcLaunch.stdin?.on('data', (data) => {
 			console.log(data.toString())
@@ -78,6 +80,19 @@ function createWindow() {
 		mcLaunch.stderr?.on('data', (data) => {
 			console.log(data.toString())
 		})
+		events.on('close-mc', () => {
+			if (isProcessRunning) {
+				mcLaunch.kill('SIGKILL')
+				mcLaunch.emit('close', 137)
+				// preventing memory leaks moment:
+				mcLaunch.removeAllListeners()
+				events.removeAllListeners('close-mc')
+			}
+		})
+	})
+
+	ipcMain.on('close-mc', () => {
+		events.emit('close-mc')
 	})
 
 	ipcMain.on('show-versions', async (event) => {
@@ -85,14 +100,13 @@ function createWindow() {
 	})
 }
 
-async function doShit() {
-    const version = '1.8.9'
+async function doShit(version: string) {
     const javaPath = 'java'
     const gamePath = 'C:/Users/USER/AppData/Roaming/.minecraft'
 
     const client = new YggdrasilClient('http://localhost:25500/auth');
-    const username = 'user1@example.com'
-    const password = 'test'
+    const username = 'test@srizan.dev'
+    const password = 'asdf'
 
     const auth = await client.login({ username, password, clientToken: 'jhadskblaekljbhklnbgeak' }).catch(e => {return console.error(e)})
 
@@ -103,4 +117,8 @@ app.whenReady().then(createWindow);
 
 interface WebsocketMessage {
 	type: 'launchButton'
+}
+
+interface LaunchMCArgs {
+	version: string
 }

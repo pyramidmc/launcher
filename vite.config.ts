@@ -7,7 +7,19 @@ export default defineConfig({
   server: {
     port: 5648,
     watch: {
-      usePolling: true,
+      usePolling: false,
+    },
+    cors: true,
+    proxy: {
+      '/tree': {
+        target: 'http://localhost:25500',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('tree', ''),
+      },
     }
-  }
+  },
+  build: {
+    outDir: './build'
+  },
+  base: ''
 })

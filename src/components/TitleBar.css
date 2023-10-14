@@ -16,7 +16,10 @@
 .closeButton {
   height: 100%;
   padding: 10px; /* Add padding for better visibility and click area */
-  cursor: pointer; /* Add cursor pointer for interaction */
+}
+
+.cursorDefault * {
+  cursor: default;
 }
 
 .closeButton:hover {
