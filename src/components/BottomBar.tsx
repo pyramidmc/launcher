@@ -35,7 +35,7 @@ export default function BottomBar() {
     const launchIpc = () => {
         if (launchButtonText === 'CLOSE')
             return ipcRenderer.send('close-mc');
-        ipcRenderer.send('launch-mc', {version: versionSelected});
+        ipcRenderer.send('launch-mc', {version: versionSelected, username: window.localStorage.getItem('selectedUser')!});
     };
 
     useEffect(() => {

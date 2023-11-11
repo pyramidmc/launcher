@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import './index.css'
-import { ChakraProvider, type ThemeConfig, extendTheme } from '@chakra-ui/react'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx'
 
 const colors = {
@@ -12,11 +11,7 @@ const colors = {
     700: '#2a69ac',
   },
 }
-const config = {
-  initialColorMode: 'dark',
-  useSystemColorMode: false,
-} as ThemeConfig
-const theme = extendTheme({ colors, config })
+const theme = extendTheme({ colors })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

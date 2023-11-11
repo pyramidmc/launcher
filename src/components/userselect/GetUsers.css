@@ -1,6 +1,6 @@
 .users {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  justify-items: center;
 }

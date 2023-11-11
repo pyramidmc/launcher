@@ -10,9 +10,19 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import GetUsers from "./userselect/GetUsers.tsx";
+import React from "react";
+import CreateUserModal from "./userselect/CreateUserModal.tsx";
 
 export default function BottomBarUser() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  React.useEffect(() => {
+    const handle = (ev: MessageEvent) => {
+      if (ev.data.name === 'closeUserSelect' || ev.data.name === 'closeCreateUserModal') return onClose()
+      window.removeEventListener('message', handle)
+    }
+    window.addEventListener('message', handle)
+  }, [])
   return (
     <div>
       <Button
@@ -30,19 +40,17 @@ export default function BottomBarUser() {
         Accounts
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Select your account</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <GetUsers />
+              <GetUsers />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
-              Create account
-            </Button>
+            <CreateUserModal />
           </ModalFooter>
         </ModalContent>
       </Modal>
