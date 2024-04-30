@@ -1,4 +1,8 @@
 # Pyramid Launcher
+
+Development status: Going for **MVP (Minimal Viable Product)**
+![](https://img.srizan.dev/medalla-de-oro-mvp-sobre-fondo-blanco-ilustraciÃ³n-de-stock-vectorial.jpg)
+
 [readme in spanish](README_ES.md)
 
 ## Notes on development

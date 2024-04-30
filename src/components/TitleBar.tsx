@@ -9,7 +9,7 @@ export default function TitleBar() {
   };
 
   return (
-    <div className="titleBar draggable">
+    <div className={`titleBar draggable`}>
       <img src={LogoTitleBar} alt="Logo" className="logo" />
       <div className="spacer" />
       <div className="closeButton nonDraggable cursorDefault" onClick={closeWindow}>

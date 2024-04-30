@@ -27,3 +27,4 @@ yggdrasil-server/*
 yggdrasil-server
 
 build/
+.minecraft/

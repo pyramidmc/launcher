@@ -1,31 +1,19 @@
 import * as path from 'node:path'
 import EventEmitter from 'node:events'
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, WebContents } from 'electron';
 import YggdrasilServer from '../tree'
-import { launch } from "@xmcl/core";
+import { launch, ResolvedVersion } from "@xmcl/core";
 import { YggdrasilClient, YggrasilAuthentication } from "@xmcl/user";
-import { getVersionList } from "@xmcl/installer";
+import { getVersionList, installTask } from "@xmcl/installer";
+import { Agent } from "undici";
 import { WebSocketServer } from 'ws';
 import { Client } from "@xhayper/discord-rpc";
+import { percentage, randomString } from 'util-utils';
+import type { Task } from './xmcltask.d.ts'
+import { rpcChange as RpcChange } from './util/rpc';
 
 const rpcClient = new Client({ clientId: '1170092288718929970' })
-class rpcChangeClass {
-	playingMC(version: string, username: string) {
-		rpcClient.user?.setActivity({
-			state: `Playing Minecraft ${version}`,
-			largeImageKey: 'mainlogo',
-			smallImageKey: `https://mc-heads.net/avatar/${username}`,
-			smallImageText: username
-		})
-	}
-	onLauncher() {
-		rpcClient.user?.setActivity({
-			state: 'On the launcher',
-			largeImageKey: 'mainlogo'
-		})
-	}
-}
-const rpcChange = new rpcChangeClass()
+const rpcChange = new RpcChange(rpcClient)
 
 function createWindow() {
 	const width = 851;
@@ -67,10 +55,8 @@ function createWindow() {
 		ws.on('error', console.error);
 		ws.on('message', (message) => {
 			const msg = JSON.parse(message.toString()) as WebsocketMessage
-			switch (msg.type) {
-				case 'launchButton':
-					userInfoRequest = msg.type
-			}
+			userInfoRequest = msg.type
+			console.log(msg)
 		})
 		events.on('mc-process', (data: 'spawn' | 'close', code: number | null) => {
 			if (userInfoRequest !== 'launchButton') return;
@@ -81,6 +67,11 @@ function createWindow() {
 				case 'close':
 					ws.send(JSON.stringify({ status: data, code }))
 					break;
+			}
+		})
+		events.on('mc-install-progress', (data: McInstallProgress) => {
+			if (userInfoRequest === 'install-progress') {
+				ws.send(JSON.stringify({ status: 'install-progress', data }))
 			}
 		})
 	})
@@ -94,6 +85,7 @@ function createWindow() {
 	})
 
 	ipcMain.on('launch-mc', async (_event, args: LaunchMCArgs) => {
+		await installVersion(args.version, mainWindow.webContents, events)
 		const mcLaunch = await doShit(args.version, args.username)
 		let isProcessRunning = true
 		mcLaunch.on('spawn', () => {
@@ -132,9 +124,32 @@ function createWindow() {
 	})
 }
 
+async function installVersion(version: string, webContents: WebContents, events: EventEmitter) {
+	const minecraftLocation = 'C:/Users/USER/AppData/Roaming/.minecraft'
+	const installer = (await getVersionList()).versions.filter(v => v.id === version)[0]
+
+	const instTask = installTask(installer, minecraftLocation) as Task<ResolvedVersion>
+
+	await instTask.startAndWait({
+		onStart() {
+			webContents.send('install-started')
+		},
+		onUpdate(task, chunkSize) {
+			if (instTask.total < 0) return
+			events.emit('mc-install-progress', {
+				percentage: percentage(instTask.progress, instTask.total),
+				downloading: task.name
+			} as McInstallProgress)
+		},
+		onFailed(task, error) {
+			console.error(error)
+		},
+	})
+}
+
 async function doShit(version: string, username: string) {
     const javaPath = 'java'
-    const gamePath = 'C:/Users/USER/AppData/Roaming/.minecraft'
+    const gamePath = '/home/srizan/.minecraft'
 
     const client = new YggdrasilClient('http://localhost:25500/auth');
 	const accDataGet = await fetch('http://localhost:25500/api/getUsers')
@@ -142,7 +157,7 @@ async function doShit(version: string, username: string) {
 	const realUsername = accDataGet.email;
 	const password = accDataGet.password;
 
-    const auth = await client.login({ username: realUsername, password, clientToken: 'jhadskblaekljbhklnbgeak' }).catch(e => {return console.error(e)})
+    const auth = await client.login({ username: realUsername, password, clientToken: randomString(8, 'sfdajbkl') }).catch(e => {return console.error(e)})
 
     return launch({ gamePath, javaPath, version, accessToken: (auth as YggrasilAuthentication).accessToken, gameProfile: (auth as YggrasilAuthentication).selectedProfile, extraJVMArgs: ['-Dminecraft.api.auth.host=http://localhost:25500/auth'] });
 }
@@ -167,4 +182,9 @@ interface AccountData {
 	username: string;
 	email: string;
 	password: string;
+}
+
+interface McInstallProgress {
+	percentage: number;
+	downloading: string;
 }

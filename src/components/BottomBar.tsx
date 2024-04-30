@@ -6,8 +6,6 @@ import { Select } from '@chakra-ui/react'
 import BottomBarUser from './BottomBarUser.tsx'
 const { ipcRenderer, IpcMainEvent } = window.require('electron');
 
-// ... (other imports and code)
-
 export default function BottomBar() {
     const [loading, setLoading] = useState(true);
     const [versions, setVersions] = useState<MinecraftVersion[]>([]);

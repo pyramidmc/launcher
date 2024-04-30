@@ -14,6 +14,6 @@
       "keepClassNames": false
     },
     "module": {
-        "type": "commonjs",
+        "type": "commonjs"
     }
 }

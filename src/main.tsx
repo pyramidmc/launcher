@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx'
+const os = window.require('node:os')
 
 const colors = {
   brand: {
@@ -14,10 +15,8 @@ const colors = {
 const theme = extendTheme({ colors })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <TitleBar />
+      {os.platform() !== 'linux' && <TitleBar />}
       <App />
     </ChakraProvider>
-  </React.StrictMode>,
 )
